@@ -1,3 +1,10 @@
+"""
+===== 
+views.py 
+===== 
+
+"""
+
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import InterviewerForm, CandidateForm, QueryForm, RegistrationForm
@@ -14,7 +21,27 @@ from datetime import datetime
 
 
 class Home(View):
+    """
+    ==============
+
+    ``Home``
+    ----------
+
+    .. py:class:: Home()
+
+
+    .. note::
+    .. todo::
+    """
     def get(self, request, *args, **kwargs):
+        """
+        .. py:attribute:: get()
+
+           :param request:
+           :type request:
+        .. note::
+        .. todo::
+        """
         form = QueryForm(self.request.GET)
         if request.user.is_superuser:
             return render(self.request,
@@ -27,6 +54,14 @@ class Home(View):
                      'error': ''})
 
     def post(self, request, *args, **kwargs):
+        """
+        .. py:attribute:: post()
+
+           :param request:
+           :type request:
+        .. note::
+        .. todo::
+        """
         form = QueryForm(self.request.POST)
         page = int(request.GET.get('page', 0))
         if page == 0:
@@ -71,7 +106,27 @@ class Home(View):
 
 
 class Availability(View):
+    """
+    ==============
+
+    ``Availability``
+    ----------
+
+    .. py:class:: Availability()
+
+
+    .. note::
+    .. todo::
+    """
     def get(self, request, *args, **kwargs):
+        """
+        .. py:attribute:: get()
+
+           :param request:
+           :type request:
+        .. note::
+        .. todo::
+        """
         if request.user.has_perm('calendarapp.interviewer'):
             form = InterviewerForm()
         elif not request.user.is_anonymous:
@@ -86,6 +141,14 @@ class Availability(View):
                          'base':'home'})
     
     def post(self, request, *args, **kwargs):
+        """
+        .. py:attribute:: post()
+
+           :param request:
+           :type request:
+        .. note::
+        .. todo::
+        """
         if request.user.has_perm('calendarapp.interviewer'):
             model = InterviewerModel()
         else:
@@ -99,6 +162,19 @@ class Availability(View):
         model.save()
 
 def login(request):
+    """
+    ==============
+
+    ``login``
+    ----------
+
+    .. py:function:: login(['request'])
+
+       :param request:
+       :type request:
+    .. note::
+    .. todo::
+    """
     error = ''
     if request.method == 'POST':
         username = request.POST['username']
@@ -123,6 +199,19 @@ def login(request):
 
 
 def signup_view(request):
+    """
+    ==============
+
+    ``signup_view``
+    ----------
+
+    .. py:function:: signup_view(['request'])
+
+       :param request:
+       :type request:
+    .. note::
+    .. todo::
+    """
     if request.method == 'POST':
         data = request.POST
         form = RegistrationForm(data)
