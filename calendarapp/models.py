@@ -18,7 +18,7 @@ class QueryRequest(models.Model):
     ----------
 
     .. py:class:: QueryRequest()
-
+    Respective model for query requests.
 
     .. note::
     .. todo::
@@ -36,8 +36,16 @@ class QueryRequest(models.Model):
     def add(self, **kwargs):
         """
         .. py:attribute:: add()
+        Save model instances.
 
-
+           :param query_type: the type ot query
+           :type query_type: str
+           :param candidate: candidate's username
+           :type candidate: str
+           :param interviewer: interviewer's username
+           :type interviewer: str
+           :param user: user object
+           :type user: auth.User
         .. note::
         .. todo::
         """
@@ -101,7 +109,6 @@ class InterviewerModel(models.Model):
     def __str__(self):
         """
         .. py:attribute:: __str__()
-
 
         .. note::
         .. todo::

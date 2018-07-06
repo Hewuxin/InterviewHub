@@ -3,6 +3,9 @@
 analyzer.py 
 ===== 
 
+This module contains all the necessary functions for analyzing
+data and helpers for views. 
+=================
 """
 
 from calendarapp.models import CandidateModel, InterviewerModel
@@ -19,11 +22,11 @@ def reformater(f):
     ----------
 
     .. py:function:: reformater(['f'])
-
-       :param f:
-       :type f:
-    .. note::
-    .. todo::
+    reformatting the names and date times
+       :param f: function
+       :type f: Function Onject
+    .. note:: 
+    .. todo:: Convert all the time zones to UTC
     """
     @wraps(f)
     def wrapper(result):
@@ -55,7 +58,7 @@ class Analyzer:
     def __init__(self, *args, **kwargs):
         """
         .. py:attribute:: __init__()
-
+        Constructor for Analyzer class
 
         .. note::
         .. todo::
@@ -66,9 +69,12 @@ class Analyzer:
     def available_interviewers(candidate_email):
         """
         .. py:attribute:: available_interviewers()
+        This function accepts the candidates email and 
+        returns a dictionary contains all the interviewers
+        available for interviewing the given candidate.
 
-           :param candidate_email:
-           :type candidate_email:
+           :param candidate_email: candidate's username
+           :type candidate_email: string
         .. note::
         .. todo::
         """
@@ -88,9 +94,11 @@ class Analyzer:
     def available_candidates(interviewer):
         """
         .. py:attribute:: available_candidates()
-
-           :param interviewer:
-           :type interviewer:
+        This function accepts the interviewer username and 
+        returns a dictionary contains all the candidates
+        available for interviewing by the given interviewer.
+           :param interviewer: interviewer username
+           :type interviewer: string
         .. note::
         .. todo::
         """
