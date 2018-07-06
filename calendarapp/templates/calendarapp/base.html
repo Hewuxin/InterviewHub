@@ -1,0 +1,39 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>InterviewHub</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Interview Hub{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/global.css"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link href="https://fonts.googleapis.com/css?family=IM+Fell+English+SC|Spectral" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah|VT323" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/calendarapp.css' %}">
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto">
+      <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <style type="text/css">
+      .page-header {
+        margin-top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'calendarapp/header.html' %}
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% block javascript %}
+    {% endblock %}
+  </body>
+</html>

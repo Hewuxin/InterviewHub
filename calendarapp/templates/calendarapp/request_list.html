@@ -1,0 +1,49 @@
+{% load filters %}
+{% block table_content %}
+<!--<p> <b>{{ founded_results }} results founded</b> </p>-->
+{% if error %}
+<P> {{ error }}</P>
+{% else %}
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        {% for title in th_list%}
+        <th>{{ title }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+            {% for record in page %}
+        <tr>
+            {% for v in record.values %}
+            <td> {{v}} </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if page.has_other_pages %}
+  <ul class="pagination">
+{% if page.has_previous %}
+      <li><a href="{% url 'users' %}?page={{page.previous_page_number}}"
+        id="change_page_id">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in page.page_range %}
+      {% if page.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="{% url 'users'%}?page={{i}}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    <!--{% if page.has_next %}
+      <li><a href="{% url 'users' page=page.next_page_number %}"
+        onclick="return chagne_page()" id="change_page_id">&raquo;</a></li>
+    {% else %}-->
+      <li class="disabled"><span>&raquo;</span></li>
+    <!--{% endif %}-->
+  </ul>
+{% endif %}
+{% endif %}
+{% endblock %}

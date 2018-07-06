@@ -1,0 +1,27 @@
+{% extends 'calendarapp/base_for_calendarapp.html' %}
+
+{% load static %}
+
+{% block title %}{{request.path}}{% endblock %}
+
+
+{% block requests_content %}
+
+{% if form %}
+<form method="POST" enctype='multipart/form-data'>{% csrf_token %}
+  <div class="custom-select" style="width:200px; margin-bottom: 20px;">
+      <li>{{ form.from_date.label_tag }} {{ form.from_date }}</li>
+      <br></br>
+      <li>{{ form.to_date.label_tag }} {{ form.to_date }}</li>
+  </div>
+<div style="margin-bottom: 20px;margin-top:30px;">
+    <button type="submit" class="btn btn-success">
+        <span class="glyphicon glyphicon glyphicon-ok"></span> Submit
+      </button>
+    </div>  
+    </form>
+{% elif request.user.is_anonymous %}
+    <span> Please <a href = "{% url 'login'%}"> LOGIN </a> 
+        to be able to use your desired functionalities :). </span>
+{% endif %}
+{% endblock %}
