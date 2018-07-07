@@ -7,12 +7,17 @@
 
 {% block requests_content %}
 
+{% if error %}
+{{ error }}
+{% else %}
 {% if form %}
 <form method="POST" enctype='multipart/form-data'>{% csrf_token %}
   <div class="custom-select" style="width:200px; margin-bottom: 20px;">
-      <li>{{ form.query_type.label_tag }} {{ form.query_type }}</li>
-      <li>{{ form.candidate.label_tag }} {{ form.candidate }}</li>
-      <li>{{ form.interviewer.label_tag }} {{ form.interviewer }}</li>
+        <li>{{ form.query_type.label_tag }} {{ form.query_type }}</li>
+        </br>
+        <li>{{ form.candidate.label_tag }} {{ form.candidate }}</li>
+        </br>
+        <li>{{ form.interviewer.label_tag }} </br> {{ form.interviewer }}</li>
   </div>
 <div style="margin-bottom: 20px;margin-top:30px;">
     <button type="submit" class="btn btn-success">
@@ -26,5 +31,6 @@
 {% endif %}
 {% if result %}
 {% include 'calendarapp/request_list.html' %}
+{% endif %}
 {% endif %}
 {% endblock %}

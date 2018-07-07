@@ -29,7 +29,7 @@ class Home(View):
     ----------
 
     .. py:class:: Home()
-
+    Home view which is responsible for the home page contents.
 
     .. note::
     .. todo::
@@ -37,22 +37,22 @@ class Home(View):
     def get(self, request, *args, **kwargs):
         """
         .. py:attribute:: get()
-
-           :param request:
-           :type request:
+        Home's get method that is responsible for showing pages > 2
+        for query requests and the very first time the home url is called. 
+           :param request: request object
+           :type request: request object
         .. note::
         .. todo::
         """
         page_num = int(request.GET.get('page', 0))
         form = QueryForm(self.request.GET)
-        if page_num == 0:
+        if page_num == 0 and request.user.is_superuser:
             return render(self.request,
                           'calendarapp/index.html',
                           {'form': form,
-                           'error': " ",
                            'base':'home'})
 
-        if request.user.is_superuser:
+        elif request.user.is_superuser:
             all_pages = cache.get("all_pages")
             page_range = range(max(0, page_num - 3), min(all_pages.count, page_num + 3))
             page = all_pages.get_page(page_num)
@@ -67,16 +67,17 @@ class Home(View):
                          'base':'home'})
 
         return render(self.request,
-                    'calendarapp/availability.html',
+                    'calendarapp/index.html',
                     {'base':'home',
-                     'error': ''})
+                     'error': """Wellcom, Please complete your registration process by
+                                    adding your availability times.""",})
 
     def post(self, request, *args, **kwargs):
         """
         .. py:attribute:: post()
-
-           :param request:
-           :type request:
+        Home's post method responsible for showin query results.
+           :param request: request object
+           :type request: request object
         .. note::
         .. todo::
         """
@@ -127,7 +128,7 @@ class Availability(View):
     ----------
 
     .. py:class:: Availability()
-
+    Handling the requests come from availability url.
 
     .. note::
     .. todo::
@@ -135,9 +136,10 @@ class Availability(View):
     def get(self, request, *args, **kwargs):
         """
         .. py:attribute:: get()
-
-           :param request:
-           :type request:
+        load the availability page for inserting the respective
+        data.
+           :param request: request object
+           :type request: request object
         .. note::
         .. todo::
         """
@@ -157,7 +159,7 @@ class Availability(View):
     def post(self, request, *args, **kwargs):
         """
         .. py:attribute:: post()
-
+        post the respective availability data and act accordingly.
            :param request:
            :type request:
         .. note::
@@ -183,9 +185,9 @@ def login(request):
     ----------
 
     .. py:function:: login(['request'])
-
-       :param request:
-       :type request:
+    Authemticate users that are already registered.
+       :param request: request object
+       :type request: request object
     .. note::
     .. todo::
     """
@@ -220,9 +222,9 @@ def signup_view(request):
     ----------
 
     .. py:function:: signup_view(['request'])
-
-       :param request:
-       :type request:
+    Register users and create a candidate based on the new user.
+       :param request: request object
+       :type request: request object
     .. note::
     .. todo::
     """
@@ -234,6 +236,10 @@ def signup_view(request):
             new_user = authenticate(username=form.cleaned_data['email'],
                                     password=form.cleaned_data['password1'])
             authlogin(request, new_user)
+            model = CandidateModel()
+            model.user = new_user
+            model.available_dates = []
+            model.save()
             return redirect(reverse('home'))
         else:
             return render(request,

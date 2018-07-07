@@ -63,7 +63,7 @@ class CandidateModel(models.Model):
     ----------
 
     .. py:class:: CandidateModel()
-
+    Candidate's model class. 
 
     .. note::
     .. todo::
@@ -75,7 +75,7 @@ class CandidateModel(models.Model):
     def __str__(self):
         """
         .. py:attribute:: __str__()
-
+        Respective string representation of the model fields.
 
         .. note::
         .. todo::
@@ -93,7 +93,7 @@ class InterviewerModel(models.Model):
     ----------
 
     .. py:class:: InterviewerModel()
-
+    Interviewer's model class.
 
     .. note::
     .. todo::
@@ -109,6 +109,7 @@ class InterviewerModel(models.Model):
     def __str__(self):
         """
         .. py:attribute:: __str__()
+        Respective string representation of the model fields.
 
         .. note::
         .. todo::
