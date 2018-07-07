@@ -14,6 +14,7 @@ from django.contrib.auth import login as authlogin
 from django.contrib.auth import authenticate
 from django.core.paginator import Paginator
 from django.urls import reverse
+from django.core.cache import cache
 from .lib.analyzer import Analyzer
 from calendarapp import config
 from datetime import datetime
@@ -42,12 +43,29 @@ class Home(View):
         .. note::
         .. todo::
         """
+        page_num = int(request.GET.get('page', 0))
         form = QueryForm(self.request.GET)
+        if page_num == 0:
+            return render(self.request,
+                          'calendarapp/index.html',
+                          {'form': form,
+                           'error': " ",
+                           'base':'home'})
+
         if request.user.is_superuser:
+            all_pages = cache.get("all_pages")
+            page_range = range(max(0, page_num - 3), min(all_pages.count, page_num + 3))
+            page = all_pages.get_page(page_num)
             return render(self.request,
                       'calendarapp/index.html',
                         {'form': form,
+                         'page': page,
+                         'has_previous': page.has_previous(),
+                         'page_range': page_range,
+                         'error': '',
+                         'has_other_pages': page.has_other_pages(),
                          'base':'home'})
+
         return render(self.request,
                     'calendarapp/availability.html',
                     {'base':'home',
@@ -63,13 +81,7 @@ class Home(View):
         .. todo::
         """
         form = QueryForm(self.request.POST)
-        page = int(request.GET.get('page', 0))
-        if page == 0:
-            return render(self.request,
-                          'calendarapp/index.html',
-                          {'form': form,
-                           'error': "Not implemented yet",
-                           'base':'home'})
+
 
         if form.is_valid():
             query = form.cleaned_data['query_type']
@@ -82,19 +94,21 @@ class Home(View):
                 # as values. If only candidate is provided otherwise
                 # the same result for interviewer
                 if candidate_email:
-                    result = self.reformat(
-                        analyzer.available_interviewers(candidate, interviewer)
-                        )
+                    result = analyzer.available_interviewers(candidate, interviewer)
                 else:
-                    result = self.reformat(
-                        analyzer.available_candidates(candidate, interviewer)
-                        )
+                    result = analyzer.available_candidates(candidate, interviewer)
                 all_pages = Paginator(results, config.ROW_NUMBER)
+                cache.set("all_pages", all_pages)
+                page = all_pages.get_page(1)
+                page_range = range(0, 3)
                 return render(self.request,
                       'calendarapp/index.html',
                         {'form': form,
                          'page': all_pages.get_page(page),
-                         'result': result,
+                         'page': page,
+                         'has_other_pages': page.has_other_pages(),
+                         'has_previous': page.has_previous(),
+                         'page_range': page_range,
                          'th_list': config.query_th,
                          'base':'home'})
             else:
