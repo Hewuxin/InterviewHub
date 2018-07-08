@@ -12,6 +12,9 @@ from calendarapp.models import CandidateModel, InterviewerModel
 from collections import defaultdict
 from functools import wraps
 import tzlocal  # $ python3 -m pip install tzlocal
+from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
+from datetime import datetime
 
 
 def reformater(f):
@@ -29,9 +32,10 @@ def reformater(f):
     .. todo:: Convert all the time zones to UTC
     """
     @wraps(f)
-    def wrapper(result):
+    def wrapper(*args):
         # Use local-timezone for more accuracy and preventing
         # the code from time conflicst.
+        result = f(*args)
         local_timezone = tzlocal.get_localzone()
         for (s, e), names in result.items():
             s = datetime.fromtimestamp(float(s), local_timezone)
@@ -66,7 +70,7 @@ class Analyzer:
         pass
     
     @reformater
-    def available_interviewers(candidate_email):
+    def available_interviewers(self, candidate_email, interviewer):
         """
         .. py:attribute:: available_interviewers()
         This function accepts the candidates email and 
@@ -78,20 +82,20 @@ class Analyzer:
         .. note::
         .. todo::
         """
-        candidate = CandidateModel.objects.get(email=candidate_email)
-        candidate_av_times = candidate.available_times
+        candidate = CandidateModel.objects.get(user__email=candidate_email)
+        candidate_av_times =  self.time_formater(candidate.available_dates)
         interviewers = InterviewerModel.objects.all()
-        interviewers_av_times = [(t.username, t.available_times) for t in interviewers]
+        interviewers_av_times = [(t.user.username,  self.time_formater(t.available_dates)) for t in interviewers]
         
         agg_result = defaultdict(list)
         for s, e in candidate_av_times:
             for name, times in interviewers_av_times:
-                if any(s > t[0] and e < t[1] for t in times):
+                if any(s == t[0] and e == t[1] for t in times):
                     agg_result[t].append(name)
         return agg_result
     
     @reformater
-    def available_candidates(interviewer):
+    def available_candidates(self, candidate_email, interviewer):
         """
         .. py:attribute:: available_candidates()
         This function accepts the interviewer username and 
@@ -103,13 +107,37 @@ class Analyzer:
         .. todo::
         """
         interviewer = InterviewerModel.objects.get(username=interviewer)
-        interviewer_av_times = interviewer.available_times
+        interviewer_av_times =  self.time_formater(interviewer.available_dates)
         candidates = CandidateModel.objects.all()
-        candidates_av_times = [(t.username, t.available_times) for t in candidates]
+        candidates_av_times = [(t.username, self.time_formater(t.available_dates)) for t in candidates]
         
         agg_result = defaultdict(list)
         for s, e in interviewer_av_times:
             for name, times in candidates_av_times:
-                if any(s > t[0] and e < t[1] for t in times):
+                if any(s == t[0] and e == t[1] for t in times):
                     agg_result[t].append(name)
         return agg_result
+    
+    def time_formater(self, times):
+        for d in times:
+            date, time = d.split('_')
+            s, e = time.split('-')
+            yield (datetime.strptime("{} {}".format(date, s), "%Y-%m-%d %H"),
+                   datetime.strptime("{} {}".format(date, e), "%Y-%m-%d %H"),
+                   )
+
+"""
+class FormCreator:
+    def __init__(self, *args, **kwargs):
+        _fields = [
+            ('from_date_{}', forms.DateField(widget=AdminDateWidget())),
+            ('to_date_{}', forms.DateField(widget=AdminDateWidget()))
+        ]
+        self.fields = [(name.format(i), filed) for i in kwargs['form_range'] for name, field in _fields]
+    
+    def create_interviewer_form(self):
+        X = type('CandidateForm', (object, form.Form), self.fileds)
+    
+    def create_candidate_form(self):
+        X = type('InterviewerForm', (object, form.Form), self.fileds)
+"""    

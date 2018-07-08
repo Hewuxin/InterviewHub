@@ -10,6 +10,7 @@ from .models import CandidateModel, InterviewerModel, QueryRequest
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import AdminDateWidget
+from . import config
 
 
 class QueryForm(forms.ModelForm):
@@ -52,8 +53,8 @@ class CandidateForm(forms.Form):
     # dynamically which is very easier with a Js-based
     # framework. Otherwise the add_field button should
     # reload the template with more fields_number
-    from_date = forms.DateField(widget=AdminDateWidget())
-    to_date = forms.DateField(widget=AdminDateWidget())
+    date = forms.ChoiceField(choices=config.DATES)
+    time = forms.ChoiceField(choices=config.TIMES)
 
 
 class InterviewerForm(forms.Form):
@@ -69,8 +70,8 @@ class InterviewerForm(forms.Form):
     .. note::
     .. todo::
     """
-    from_date = forms.DateField(widget=AdminDateWidget())
-    to_date = forms.DateField(widget=AdminDateWidget())
+    date = forms.ChoiceField(choices=config.DATES)
+    time = forms.ChoiceField(choices=config.TIMES)
 
 class RegistrationForm(UserCreationForm):
     """

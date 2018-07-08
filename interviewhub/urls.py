@@ -28,6 +28,8 @@ urlpatterns = [
     path(r'accounts/login/', views.login, name='login'),
     path(r'logout/', auth_views.logout, name='logout', kwargs={'next_page': '/'}),
     path(r'signup/', views.signup_view, name='signup'),
-    path(r'availability/', views.Availability.as_view(), name='availability'),
-    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    path(r'availability',
+         views.Availability.as_view(),
+         name='availability'),
+    path(r'jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

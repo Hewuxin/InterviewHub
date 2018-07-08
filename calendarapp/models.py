@@ -30,8 +30,8 @@ class QueryRequest(models.Model):
     )
     query_type = models.CharField(max_length=100, choices=CHOICES)
     request_date = models.DateTimeField(default=timezone.now)
-    candidate = models.ForeignKey('CandidateModel', on_delete=models.CASCADE) # models.CharField(max_length=300)
-    interviewer = models.ForeignKey('InterviewerModel', on_delete=models.CASCADE) # models.CharField(max_length=300)
+    candidate = models.ForeignKey('CandidateModel', on_delete=models.CASCADE, blank=True) # models.CharField(max_length=300)
+    interviewer = models.ForeignKey('InterviewerModel', on_delete=models.CASCADE, blank=True) # models.CharField(max_length=300)
 
     def add(self, **kwargs):
         """
@@ -70,8 +70,12 @@ class CandidateModel(models.Model):
     """
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     request_date = models.DateTimeField(default=timezone.now)
-    available_dates = ArrayField(DateTimeRangeField(), null=True, blank=True)
+    available_dates = ArrayField(models.CharField(max_length=100), null=True, blank=True)
 
+    class Meta:
+        permissions = (
+            ("candidate", "not an interviewer"),
+        )
     def __str__(self):
         """
         .. py:attribute:: __str__()
@@ -80,10 +84,8 @@ class CandidateModel(models.Model):
         .. note::
         .. todo::
         """
-        return "{} {}".format(
-            self.user.first_name,
-            self.user.last_name
-        ) 
+        return str(self.user.username)
+
 
 class InterviewerModel(models.Model):
     """
@@ -100,12 +102,9 @@ class InterviewerModel(models.Model):
     """
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     request_date = models.DateTimeField(default=timezone.now)
-    available_dates = ArrayField(DateTimeRangeField(),null=True, blank=True)
+    available_dates = ArrayField(models.CharField(max_length=100),null=True, blank=True)
     
-    class Meta:
-        permissions = (
-            ("interviwer", "Permissions that a candidate shouldn't have."),
-        )
+
     def __str__(self):
         """
         .. py:attribute:: __str__()
@@ -114,7 +113,4 @@ class InterviewerModel(models.Model):
         .. note::
         .. todo::
         """
-        return "{} {}".format(
-            self.user.first_name,
-            self.user.last_name
-        ) 
+        return str(self.user.username)

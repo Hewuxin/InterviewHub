@@ -1,5 +1,5 @@
 {% extends 'calendarapp/base_for_calendarapp.html' %}
-
+{% load filters %}
 {% load static %}
 
 {% block title %}{{request.path}}{% endblock %}
@@ -8,20 +8,89 @@
 {% block requests_content %}
 
 {% if form %}
+
 <form method="POST" enctype='multipart/form-data'>{% csrf_token %}
-  <div class="custom-select" style="width:200px; margin-bottom: 20px;">
-      <li>{{ form.from_date.label_tag }} {{ form.from_date }}</li>
-      <br></br>
-      <li>{{ form.to_date.label_tag }} {{ form.to_date }}</li>
+  <div style="width:200px; margin-bottom: 20px;">
+      <li>{{ form.date.label_tag }} {{ form.date }}</li>
+      <br>
+      <li>{{ form.time.label_tag }} {{ form.time }}</li>
   </div>
 <div style="margin-bottom: 20px;margin-top:30px;">
+    <button type="button" onclick="return callurl()" class="btn btn-submit"> 
+        <span class="glyphicon glyphicon glyphicon-plus"> </span> Add date to list
+    </button>
     <button type="submit" class="btn btn-success">
         <span class="glyphicon glyphicon glyphicon-ok"></span> Submit
       </button>
     </div>  
     </form>
+
+<p> Added sofar: </p>
+{% for date in already_added %}
+<li> {{date}} </li>
+{% endfor %}
 {% elif request.user.is_anonymous %}
     <span> Please <a href = "{% url 'login'%}"> LOGIN </a> 
         to be able to use your desired functionalities :). </span>
 {% endif %}
+
+<script>
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+
+function callurl() {
+    var time = document.getElementById("id_time").value;
+    var date = document.getElementById("id_date").value;
+    var already_added = "{{already_added|concat}}";
+    var theurl = "{% url 'availability' %}?action=add&already_added=" + already_added + "&time=" + time + "&date=" + date;
+    var csrftoken = getCookie('csrftoken');
+    $.ajax({
+        dataType: "json",
+        url : theurl, // the endpoint
+        type : "GET", // http method
+        data : { 'time' : time,
+                 'date': date,
+                 'already_added': already_added,
+                 'csrfmiddlewaretoken': csrftoken }, // data sent with the post request
+
+        // handle a successful response
+        success : function(response) {
+            document.open();
+            document.write(response.html);
+            document.close();
+        },
+
+        // handle a non-successful response
+        error : function(xhr, errmsg, err) { 
+            console.log(xhr.status + ": " + xhr.responseText);
+    }
+});
+    $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+};
+</script>
 {% endblock %}

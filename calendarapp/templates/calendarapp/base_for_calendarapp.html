@@ -13,7 +13,8 @@
             Query
           </a>
           {% endif %}
-          <a href="{% url 'availability' %}" class="list-group-item {% if request.path == '/finished/' %} active{% endif %}">
+          <a href="{% url 'availability'%}" 
+          class="list-group-item {% if request.path == '/finished/' %} active{% endif %}">
             Add availability time
           </a>
         </div>
