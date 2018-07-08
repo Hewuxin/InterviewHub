@@ -1,5 +1,5 @@
 ### Techs ###
-Python-3.5
+Python-3.5+
 Django-2.0
 /installed with pip3 install django
 psycopg-2
