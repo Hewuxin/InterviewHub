@@ -72,10 +72,6 @@ class CandidateModel(models.Model):
     request_date = models.DateTimeField(default=timezone.now)
     available_dates = ArrayField(models.CharField(max_length=100), null=True, blank=True)
 
-    class Meta:
-        permissions = (
-            ("candidate", "not an interviewer"),
-        )
     def __str__(self):
         """
         .. py:attribute:: __str__()
@@ -104,7 +100,10 @@ class InterviewerModel(models.Model):
     request_date = models.DateTimeField(default=timezone.now)
     available_dates = ArrayField(models.CharField(max_length=100),null=True, blank=True)
     
-
+    class Meta:
+        permissions = (
+            ("interviewer", "not an candidate"),
+        )
     def __str__(self):
         """
         .. py:attribute:: __str__()

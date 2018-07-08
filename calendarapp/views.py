@@ -161,11 +161,12 @@ class Availability(View):
         if action == 'add':
             already_added = request.GET.get('already_added')
             date = request.GET.get('date')
-            time = request.GET.get('time')
+            time_from = request.GET.get('time_from')
+            time_to = request.GET.get('time_to')
             if already_added:
-                already_added = already_added.split('|')  + ["{}_{}".format(date, time)]
+                already_added = already_added.split('|')  + ["{}_{}-{}".format(date, time_from, time_to)]
             else:
-                already_added = ["{}_{}".format(date, time)]
+                already_added = ["{}_{}-{}".format(date, time_from, time_to)]
             cache.set('{}_dates'.format(request.user.username), already_added)
             if request.user.has_perm('calendarapp.interviewer'):
                 form = InterviewerForm()
@@ -203,7 +204,8 @@ class Availability(View):
             form = InterviewerForm(self.request.POST)
             if form.is_valid():
                 date = form.cleaned_data['date']
-                time = form.cleaned_data['time']
+                time_from = form.cleaned_data['time_from']
+                time_to = form.cleaned_data['time_to']
             else:
                 # exception should be handled more properly!
                 raise Exception("Invalid form")
@@ -212,13 +214,14 @@ class Availability(View):
             form = CandidateForm(self.request.POST)
             if form.is_valid():
                 date = form.cleaned_data['date']
-                time = form.cleaned_data['time']
+                time_from = form.cleaned_data['time_from']
+                time_to = form.cleaned_data['time_to']
             else:
                 # exception should be handled more properly!
                 raise Exception("Invalid form")
 
         already_added = cache.get('{}_dates'.format(request.user.username))
-        print(already_added)
+        already_added.extend(["{}_{}-{}".format(date, time_from, time_to)])
         # kwargs['available_dates'] is a list of timestap pairs
         # It can be converted to integers as:
         # [(int(i), int(j)) for i,j in kwargs['available_dates']]

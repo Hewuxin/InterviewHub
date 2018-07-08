@@ -13,7 +13,7 @@
   <div style="width:200px; margin-bottom: 20px;">
       <li>{{ form.date.label_tag }} {{ form.date }}</li>
       <br>
-      <li>{{ form.time.label_tag }} {{ form.time }}</li>
+      <li>{{ form.time_from.label_tag }} {{ form.time_from }} to {{ form.time_to }}</li>
   </div>
 <div style="margin-bottom: 20px;margin-top:30px;">
     <button type="button" onclick="return callurl()" class="btn btn-submit"> 
@@ -58,16 +58,18 @@ function csrfSafeMethod(method) {
 
 
 function callurl() {
-    var time = document.getElementById("id_time").value;
+    var time_from = document.getElementById("id_time_from").value;
+    var time_to = document.getElementById("id_time_to").value;
     var date = document.getElementById("id_date").value;
     var already_added = "{{already_added|concat}}";
-    var theurl = "{% url 'availability' %}?action=add&already_added=" + already_added + "&time=" + time + "&date=" + date;
+    var theurl = "{% url 'availability' %}?action=add&already_added=" + already_added + "&time_from=" + time_from + "&time_to=" + time_to + "&date=" + date;
     var csrftoken = getCookie('csrftoken');
     $.ajax({
         dataType: "json",
         url : theurl, // the endpoint
         type : "GET", // http method
-        data : { 'time' : time,
+        data : { 'time_from' : time_from,
+                 'time_to': time_to,
                  'date': date,
                  'already_added': already_added,
                  'csrfmiddlewaretoken': csrftoken }, // data sent with the post request

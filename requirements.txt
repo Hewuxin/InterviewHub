@@ -5,7 +5,11 @@ Django-2.0
 psycopg-2
 /installed with: pip3 install psycopg2-binary
 
-
+memcached
+/sudo apt-get install libmemcached-dev
+/apt-get install memcached
+/python3 -m pip install pylibmc
+/python3 -m pip install python3-memcached
 
 ### Techs ###
 

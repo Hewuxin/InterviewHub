@@ -36,12 +36,10 @@ def reformater(f):
         # Use local-timezone for more accuracy and preventing
         # the code from time conflicst.
         result = f(*args)
-        local_timezone = tzlocal.get_localzone()
-        for (s, e), names in result.items():
-            s = datetime.fromtimestamp(float(s), local_timezone)
-            e = datetime.fromtimestamp(float(e), local_timezone)
-            date = s.strftime("%Y-%m-%d %H:%M:%S.%f%z (%Z)").split()[0]
-            time = "{} to {}".format(s.hour, e.hour)
+        # local_timezone = tzlocal.get_localzone()
+        for (date, time), names in result.items():
+            #s = datetime.fromtimestamp(float(s), local_timezone)
+            #e = datetime.fromtimestamp(float(e), local_timezone)
             names = ','.join(names)
             yield {"date": date,"time": time, "names": names}
     return wrapper
@@ -88,10 +86,10 @@ class Analyzer:
         interviewers_av_times = [(t.user.username,  self.time_formater(t.available_dates)) for t in interviewers]
         
         agg_result = defaultdict(list)
-        for s, e in candidate_av_times:
+        for hours, date, _date, _time in candidate_av_times:
             for name, times in interviewers_av_times:
-                if any(s == t[0] and e == t[1] for t in times):
-                    agg_result[t].append(name)
+                if any((d == date) and h.intersection(hours) for h, d, *_ in times):
+                    agg_result[(_date, _time)].append(name)
         return agg_result
     
     @reformater
@@ -112,19 +110,19 @@ class Analyzer:
         candidates_av_times = [(t.username, self.time_formater(t.available_dates)) for t in candidates]
         
         agg_result = defaultdict(list)
-        for s, e in interviewer_av_times:
+        for hours, date, _date, _time in interviewer_av_times:
             for name, times in candidates_av_times:
-                if any(s == t[0] and e == t[1] for t in times):
-                    agg_result[t].append(name)
+                if any((d == date) and h.intersection(hours) for h, d, *_ in times):
+                    agg_result[(_date, _time)].append(name)
         return agg_result
     
     def time_formater(self, times):
         for d in times:
-            date, time = d.split('_')
-            s, e = time.split('-')
-            yield (datetime.strptime("{} {}".format(date, s), "%Y-%m-%d %H"),
-                   datetime.strptime("{} {}".format(date, e), "%Y-%m-%d %H"),
-                   )
+            _date, _time = d.split('_')
+            s, e = _time.split('-')
+            date = datetime.strptime(_date, "%Y-%m-%d"),
+            hours = set(range(int(s), int(e)))
+            yield hours, date, _date, _time
 
 """
 class FormCreator:

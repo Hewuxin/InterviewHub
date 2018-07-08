@@ -54,7 +54,8 @@ class CandidateForm(forms.Form):
     # framework. Otherwise the add_field button should
     # reload the template with more fields_number
     date = forms.ChoiceField(choices=config.DATES)
-    time = forms.ChoiceField(choices=config.TIMES)
+    time_from = forms.ChoiceField(choices=config.TIMES_FROM)
+    time_to = forms.ChoiceField(choices=config.TIMES_TO)
 
 
 class InterviewerForm(forms.Form):
@@ -71,7 +72,9 @@ class InterviewerForm(forms.Form):
     .. todo::
     """
     date = forms.ChoiceField(choices=config.DATES)
-    time = forms.ChoiceField(choices=config.TIMES)
+    time_from = forms.ChoiceField(choices=config.TIMES_FROM)
+    time_to = forms.ChoiceField(choices=config.TIMES_TO)
+
 
 class RegistrationForm(UserCreationForm):
     """
