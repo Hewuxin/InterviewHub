@@ -35,11 +35,11 @@ service postgresql restart
 psql -U postgres
 
 /enter a pasword for postgresql user and enter interactive shell
-/ create the testhub database user and cheange the privilages by following commands
+/ create the interviewhub database user and cheange the privilages by following commands
 
-create database testhub;
-CREATE USER tester WITH PASSWORD 'test_password';
-GRANT ALL PRIVILEGES ON DATABASE "testhub" to tester;
+create database interviewhub;
+CREATE USER kasra WITH PASSWORD 'w0rdsd0ntc0m33asy';
+GRANT ALL PRIVILEGES ON DATABASE "interviewhub" to kasra;
 
 /quit the shell by \q
 
