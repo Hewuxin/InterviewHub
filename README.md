@@ -7,3 +7,6 @@ In this application every user can see their respective options and it has a sol
 The permission is shown as following:
 
     calendarapp | interviewer model | not an candidate
+Also, in order to be able to run queries you should be a superuser which can be created through the following command:
+    
+    python3 manage.py createsuperuser
